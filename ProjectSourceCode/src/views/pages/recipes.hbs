@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .calories-info {
+            display: flex;
+            justify-content: space-around;
+        }
+        .calories-info div {
+            flex: 1;
+            margin: 0 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .exceed-goal-text {
+            color: red;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #b3d2f3;
+        }
+    </style>
+</head>
+<body>
+    <div style="display: flex; justify-content: center;">
+        <button id="myBtn"
+            style="padding: 10px 20px; font-size: 16px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer;">Search
+            For Recipes</button>
+    </div>
+    <div id="myModal" class="modal"
+        style="display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4);">
+        <span class="close">&times;</span>
+        <div class="modal-content"
+            style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 10px;">
+
+            <form id="recipeFiltersForm">
+                <h2 style="text-align: center;">Enter Recipe Filters</h2>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="keyword" style="margin-right: 10px;">Keyword:</label>
+                    <input type="text" id="keyword" name="keyword" style="padding: 8px; width: calc(100% - 120px);">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="minCal" style="margin-right: 10px;">Minimum Calories:</label>
+                    <input type="number" id="minCal" name="minCal" min="0" value="100" style="padding: 8px;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="maxCal" style="margin-right: 10px;">Maximum Calories:</label>
+                    <input type="number" id="maxCal" name="maxCal" min="0" value="2000" style="padding: 8px;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="mealType" style="margin-right: 10px;">Meal Type:</label>
+                    <select id="mealType" name="mealType" style="padding: 8px; width: 200px;">
+                        <option value="Breakfast">Breakfast</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Dinner" selected>Dinner</option>
+                        <option value="Snack">Snack</option>
+                        <option value="None">None</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="minProtein" style="margin-right: 10px;">Min Protein (g):</label>
+                    <input type="text" id="minProtein" name="minProtein" style="padding: 8px;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="maxProtein" style="margin-right: 10px;">Max Protein (g):</label>
+                    <input type="text" id="maxProtein" name="maxProtein" style="padding: 8px;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="minCarbs" style="margin-right: 10px;">Min Carbohydrates (g):</label>
+                    <input type="text" id="minCarbs" name="minCarbs" style="padding: 8px;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="maxCarbs" style="margin-right: 10px;">Max Carbohydrates (g):</label>
+                    <input type="text" id="maxCarbs" name="maxCarbs" style="padding: 8px;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="minFat" style="margin-right: 10px;">Min Fat (g):</label>
+                    <input type="text" id="minFat" name="minFat" style="padding: 8px;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="maxFat" style="margin-right: 10px;">Max Fat (g):</label>
+                    <input type="text" id="maxFat" name="maxFat" style="padding: 8px;">
+                </div>
+
+                <input type="submit" value="Apply Filters"
+                    style="padding: 10px 20px; background-color: #007bff; color: #fff; border: none; cursor: pointer; ms-auto">
+            </form>
+        </div>
+    </div>
+
+    <div class="container mx-auto">
+        {{#if recipes.length}}
+        {{#each recipes}}
+        <div class="row justify-content-md-center">
+            <div class="col-md-8">
+                <h3>{{this.label}}</h3>
+                <img src="{{this.image}}" alt="{{this.label}}" style="width: 100%; max-width: 300px;">
+                <p>Calories: {{this.calories}} kcal</p>
+                <p>Protein: {{this.nutrients.PROCNT.quantity}} g</p>
+                <p>Fat: {{this.nutrients.FAT.quantity}} g</p>
+                <p>Carbs: {{this.nutrients.CHOCDF.quantity}} g</p>
+                <p><a href="{{this.url}}">View Recipe</a></p>
+            </div>
+        </div>
+        {{/each}}
+        {{else}}
+        <div class="row display: flex; justify-content: center;" >
+            <div class="col  display: flex; justify-content: center;">
+                No recipes found.
+            </div>
+        </div>
+        {{/if}}
+    </div>
+    <script type="text/javascript" src="/resources/js/script.js"></script>
+    {{>footer}}
+</body>
+
+</html>
